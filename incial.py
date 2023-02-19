@@ -6,7 +6,7 @@ from pygame.locals import *
 
 pygame.init()
 
-FPS = 60
+FPS = 30
 FramePerSec = pygame.time.Clock()
 #cores predefinidas
 
@@ -22,7 +22,7 @@ SCREEN_HEIGHT = 600
 DISPLAYSURF = pygame.display.set_mode((400,600))
 DISPLAYSURF.fill(white)
 pygame.display.set_caption("Game")
-DEFAULT_IMAGE_SIZE = (70, 70) 
+DEFAULT_IMAGE_SIZE = (70,90) 
 enemy = pygame.image.load("enemy2.png")
 car = pygame.image.load("car2.png")
 enemy_image = pygame.transform.scale(enemy, DEFAULT_IMAGE_SIZE)
@@ -53,10 +53,10 @@ class Player(pygame.sprite.Sprite):
  
     def update(self):
         pressed_keys = pygame.key.get_pressed()
-       #if pressed_keys[K_UP]:
-            #self.rect.move_ip(0, -5)
-       #if pressed_keys[K_DOWN]:
-            #self.rect.move_ip(0,5)
+        if pressed_keys[K_UP]:
+                self.rect.move_ip(0, -5)
+        if pressed_keys[K_DOWN]:
+                self.rect.move_ip(0,5)
          
         if self.rect.left > 0:
               if pressed_keys[K_LEFT]:
