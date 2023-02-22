@@ -71,25 +71,25 @@ class Player(pygame.sprite.Sprite):
               if pressed_keys[K_RIGHT]:
                   self.rect.move_ip(5, 0)
  
-#Setting up Sprites        
+#Configurando Sprites       
 P1 = Player()
 E1 = Enemy()
  
-#Creating Sprites Groups
+#Criando grupos de sprites
 enemies = pygame.sprite.Group()
 enemies.add(E1)
 all_sprites = pygame.sprite.Group()
 all_sprites.add(P1)
 all_sprites.add(E1)
  
-#Adding a new User event 
+#Adicionando um novo evento de usuário
 INC_SPEED = pygame.USEREVENT + 1
 pygame.time.set_timer(INC_SPEED, 1000)
  
 #Game Loop
 while True:
        
-    #Cycles through all events occuring  
+    #Percorre todos os eventos que ocorrem
     for event in pygame.event.get():
         if event.type == INC_SPEED:
               SPEED += 2
@@ -101,12 +101,12 @@ while True:
  
     DISPLAYSURF.fill(WHITE)
  
-    #Moves and Re-draws all Sprites
+    #Move e Re-draws todos os Sprites
     for entity in all_sprites:
         DISPLAYSURF.blit(entity.image, entity.rect)
         entity.move()
  
-    #To be run if collision occurs between Player and Enemy
+    #Para ser executado se ocorrer colisão entre o jogador e o inimigo
     if pygame.sprite.spritecollideany(P1, enemies):
           DISPLAYSURF.fill(RED)
           pygame.display.update()
