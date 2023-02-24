@@ -1,4 +1,3 @@
-#Imports
 import random
 import sys
 import time
@@ -6,49 +5,54 @@ import time
 import pygame
 from pygame.locals import *
 
-#Initializing 
 pygame.init()
  
-#Setting up FPS 
+# Setting up FPS 
 FPS = 60
 FramePerSec = pygame.time.Clock()
- 
 #Creating colors
-BLUE  = (0, 0, 255)
-RED   = (255, 0, 0)
+BLUE = (0, 0, 255)
+RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
  
-#Other Variables for use in the program
+# Outras Variáveis ​​para uso no programa
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 SPEED = 5
- 
-#Create a white screen 
-DISPLAYSURF = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
+SCORE = 0
+     
+# Configurando Fontes
+font = pygame.font.SysFont("Verdana", 60)
+font_small = pygame.font.SysFont("Verdana", 20)
+game_over = font.render("Game Over", True, BLACK)
+background = pygame.image.load("AnimatedStreet.png")
+# Criando tela branca
+DISPLAYSURF = pygame.display.set_mode((400, 600))
 DISPLAYSURF.fill(WHITE)
-pygame.display.set_caption("Game")
+pygame.display.set_caption("Traffic Car")
 DEFAULT_IMAGE_SIZE = (70,90) 
 enemy = pygame.image.load("enemy2.png")
 car = pygame.image.load("car2.png")
 enemy_image = pygame.transform.scale(enemy, DEFAULT_IMAGE_SIZE)
 player_image = pygame.transform.scale(car, DEFAULT_IMAGE_SIZE)
 
- 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__() 
         self.image = enemy_image
         self.rect = self.image.get_rect()
-        self.rect.center = (random.randint(40,SCREEN_WIDTH-40), 0)    
-
+        self.rect.center = (random.randint(40, SCREEN_WIDTH-40), 0)
+        
     def move(self):
+        global SCORE
         self.rect.move_ip(0,SPEED)
         if (self.rect.top > 600):
+            SCORE += 1
             self.rect.top = 0
-            self.rect.center = (random.randint(30, 370), 0)
- 
+            self.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)
+    
  
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -60,18 +64,18 @@ class Player(pygame.sprite.Sprite):
     def move(self):
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[K_UP]:
-                self.rect.move_ip(0, -5)
+            self.rect.move_ip(0, -5)
         if pressed_keys[K_DOWN]:
-                self.rect.move_ip(0,5)
+            self.rect.move_ip(0,5)
             
         if self.rect.left > 0:
-              if pressed_keys[K_LEFT]:
-                  self.rect.move_ip(-5, 0)
+            if pressed_keys[K_LEFT]:
+                self.rect.move_ip(-5, 0)
         if self.rect.right < SCREEN_WIDTH:        
-              if pressed_keys[K_RIGHT]:
-                  self.rect.move_ip(5, 0)
- 
-#Configurando Sprites       
+            if pressed_keys[K_RIGHT]:
+                self.rect.move_ip(5, 0)
+                   
+#Setting up Sprites        
 P1 = Player()
 E1 = Enemy()
  
@@ -86,35 +90,39 @@ all_sprites.add(E1)
 INC_SPEED = pygame.USEREVENT + 1
 pygame.time.set_timer(INC_SPEED, 1000)
  
-#Game Loop
 while True:
-       
-    #Percorre todos os eventos que ocorrem
+    # Percorre todos os eventos que ocorrem
     for event in pygame.event.get():
         if event.type == INC_SPEED:
-              SPEED += 2
-           
+              SPEED += 0.5     
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
  
+    DISPLAYSURF.blit(background, (0,0))
+    scores = font_small.render(str(SCORE), True, BLACK)
+    DISPLAYSURF.blit(scores, (10,10))
  
-    DISPLAYSURF.fill(WHITE)
- 
-    #Move e Re-draws todos os Sprites
+    # Move e Redesenha todos os Sprites
     for entity in all_sprites:
         DISPLAYSURF.blit(entity.image, entity.rect)
         entity.move()
  
-    #Para ser executado se ocorrer colisão entre o jogador e o inimigo
+    
+    # Para ser executado se ocorrer colisão entre Jogador e Inimigo
     if pygame.sprite.spritecollideany(P1, enemies):
-          DISPLAYSURF.fill(RED)
-          pygame.display.update()
-          for entity in all_sprites:
-                entity.kill() 
-          time.sleep(2)
-          pygame.quit()
-          sys.exit()        
+        pygame.mixer.Sound('crash.wav').play()
+        time.sleep(0.5)
+                
+        DISPLAYSURF.fill(RED)
+        DISPLAYSURF.blit(game_over, (30,250))
+        
+        pygame.display.update()
+        for entity in all_sprites:
+            entity.kill()
+        time.sleep(2)
+        pygame.quit()
+        sys.exit()        
          
     pygame.display.update()
     FramePerSec.tick(FPS)
