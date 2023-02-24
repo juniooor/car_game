@@ -7,10 +7,10 @@ from pygame.locals import *
 
 pygame.init()
  
-# Setting up FPS 
+# configurando FPS
 FPS = 60
 FramePerSec = pygame.time.Clock()
-#Creating colors
+# Criando cores
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
